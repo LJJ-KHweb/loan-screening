@@ -208,8 +208,6 @@ Postman 으로 호출하고 `LOAN_APPLICATION` 테이블에 저장된 결과를 
 | 이미 심사한 접수 | 심사 | **409** `ALREADY_SCREENED` |
 | 접수번호에 문자 | 심사 | **400** `INVALID_INPUT_VALUE` |
 
-부결 케이스도 `STATUS = 'REJECTED'`, `REJECT_REASON` 과 함께 저장되는 것을
-확인했습니다. 400, 404, 409 로 걸러진 요청은 처리 전에 중단되므로 이력이 남지 않습니다.
 
 ## 개발 환경
 
