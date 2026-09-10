@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kh.loan.model.dao.LoanApplicationMapper">
+
+    <!-- 심사 진행 중인 접수가 있으면 새 접수를 받지 않는다 -->
+    <select id="countInProgress" resultType="int">
+        SELECT
+                COUNT(*)
+          FROM
+                LOAN_APPLICATION
+         WHERE
+                CUSTOMER_NO = #{customerNo}
+           AND
+                STATUS = 'IN_PROGRESS'
+    </select>
+
+
+    <!-- 접수 저장
+         selectKey 로 시퀀스 값을 먼저 받아 applicationNo 에 넣고, 그 번호로 INSERT 한다 -->
+    <insert id="insertApplication" parameterType="com.kh.loan.model.dto.LoanApplyRequest">
+
+        <selectKey keyProperty="applicationNo" resultType="long" order="BEFORE">
+            SELECT
+                    SEQ_LOAN_APPLICATION.NEXTVAL
+              FROM
+                    DUAL
+        </selectKey>
+
+        INSERT
+          INTO
+                LOAN_APPLICATION
+                (
+				APPLICATION_NO
+             ,  CUSTOMER_NO
+             ,  ANNUAL_INCOME
+             ,  EXISTING_PAYMENT
+             ,  CREDIT_GRADE
+             ,  REQUEST_AMOUNT
+             ,  TERM_YEARS
+             ,  COLLATERAL_VALUE
+             ,  STATUS
+                )
+        VALUES
+                (
+                #{applicationNo}
+             ,  #{customerNo}
+             ,  #{annualIncome}
+             ,  #{existingPayment}
+             ,  #{creditGrade}
+             ,  #{requestAmount}
+             ,  #{termYears}
+             ,  #{collateralValue}
+             ,  'IN_PROGRESS'
+                )
+    </insert>
+
+
+    <!-- 접수번호로 한 건 조회 -->
+    <select id="findByNo" resultType="com.kh.loan.model.dto.LoanApplicationDetail">
+        SELECT
+                APPLICATION_NO
+             ,  CUSTOMER_NO
+             ,  ANNUAL_INCOME
+             ,  EXISTING_PAYMENT
+             ,  CREDIT_GRADE
+             ,  REQUEST_AMOUNT
+             ,  TERM_YEARS
+             ,  COLLATERAL_VALUE
+             ,  STATUS
+             ,  APPROVED_LIMIT
+             ,  DSR
+             ,  REJECT_REASON
+          FROM
+                LOAN_APPLICATION
+         WHERE
+                APPLICATION_NO = #{applicationNo}
+    </select>
+
+
+    <!-- 심사 결과 반영
+         승인이면 rejectReason 이 null 로 들어온다
+         null 은 값에서 타입을 알 수 없어 jdbcType 을 지정해야 Oracle 드라이버가 받는다 -->
+    <update id="updateResult">
+        UPDATE
+                LOAN_APPLICATION
+           SET
+                STATUS         = #{status}
+             ,  APPROVED_LIMIT = #{approvedLimit, jdbcType=NUMERIC}
+             ,  DSR            = #{dsr,           jdbcType=NUMERIC}
+             ,  REJECT_REASON  = #{rejectReason,  jdbcType=VARCHAR}
+             ,  SCREENED_AT    = CURRENT_TIMESTAMP
+         WHERE
+                APPLICATION_NO = #{applicationNo}
+    </update>
+
+</mapper>
