@@ -119,13 +119,7 @@ com.kh.loan
    `application.yml` 의 `username` / `password` 는 값을 직접 적지 않고
    환경변수를 읽도록 해 두었다 (계정 정보를 저장소에 올리지 않기 위해)
 3. 애플리케이션 실행
-
-```
-gradlew.bat bootRun    # http://localhost:8080
-```
-
-`spring.sql.init.mode` 는 `never` 로 두어 실행할 때마다 DDL 이 돌지 않게 했고,
-매퍼에서 실행되는 SQL 은 콘솔 로그로 확인할 수 있습니다.
+4. postman으로 검증
 
 ## 요청 / 응답 예시
 
