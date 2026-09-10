@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: loan
+
+  datasource:
+    url: jdbc:oracle:thin:@localhost:1521:xe
+    driver-class-name: oracle.jdbc.OracleDriver
+    username: ${USERNAME}
+    password: ${PASSWORD}
+
+  # 테이블은 schema.sql 을 SQL Developer 에서 한 번 실행해 만들어 둔다
+  sql:
+    init:
+      mode: never
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.kh.loan.model.dto
+  configuration:
+    map-underscore-to-camel-case: true
+    jdbc-type-for-null: NULL
+
+logging:
+  level:
+    com.kh.loan.model.dao: debug
